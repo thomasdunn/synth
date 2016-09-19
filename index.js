@@ -1,5 +1,6 @@
-var freqRange = document.getElementById('frequency');
-var gainRange = document.getElementById('gain');
+var freq = document.getElementById('frequency');
+var gain = document.getElementById('gain');
+var waveform = document.getElementById('waveform');
 
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -9,18 +10,26 @@ var gainNode = audioCtx.createGain();
 oscillator.connect(gainNode);
 gainNode.connect(audioCtx.destination);
 
-oscillator.type = 'triangle';
-oscillator.frequency.value = getFloat(freqRange);
+oscillator.type = getSelectValue(waveform);
+oscillator.frequency.value = getFloat(freq);
 oscillator.start();
 
-freqRange.addEventListener('input', function() {
-  oscillator.frequency.value = getFloat(freqRange);
+freq.addEventListener('input', function() {
+  oscillator.frequency.value = getFloat(freq);
 });
 
-gainRange.addEventListener('input', function() {
-  gainNode.gain.value = getFloat(gainRange);
+gain.addEventListener('input', function() {
+  gainNode.gain.value = getFloat(gain);
+});
+
+waveform.addEventListener('change', function() {
+  oscillator.type = getSelectValue(waveform);
 });
 
 function getFloat(elt) {
   return parseFloat(elt.value);
+}
+
+function getSelectValue(elt) {
+  return elt.options[elt.selectedIndex].value;
 }
