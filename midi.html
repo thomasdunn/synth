@@ -1,0 +1,25 @@
+<html>
+<head>
+  <title>Synth</title>
+</head>
+<body>
+  <h1>Synth</h1>
+
+  <h2>MIDI controlled pitch</h2>
+  <div>
+    <label>Level</label>
+    <input id="gain" type="range" value="1" min="0.0" max="5" step="0.1" />
+  </div>
+  <div>
+    <label>Waveform</label>
+    <select id="waveform">
+      <option value='sine'>sine</option>
+      <option value='square'>square</option>
+      <option value='sawtooth'>sawtooth</option>
+      <option value='triangle'>triangle</option>
+    </select>
+  </div>
+
+  <script src="midi.js"></script>
+</body>
+</html>
