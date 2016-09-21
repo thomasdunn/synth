@@ -7,7 +7,7 @@ var oscillator = audioCtx.createOscillator();
 var gainNode = audioCtx.createGain();
 
 var midiAccess;
-var noteIsOn = false;
+var notesOn = [];
 
 oscillator.connect(gainNode);
 gainNode.connect(audioCtx.destination);
@@ -44,8 +44,8 @@ function onMIDISuccess(access) {
 
 function onMIDIMessage(message) {
 	// console.log(message.data);
-	// done touch high 4 bits, clear low 4 bits - gets just type
 	var data = message.data,
+		// don't touch high 4 bits, clear low 4 bits - gets just type
 		msgType = data[0] & 0xf0
 		note = data[1],
 		velocity = data[2];
@@ -63,22 +63,34 @@ function onMIDIMessage(message) {
 }
 
 function noteOn(note, velocity) {
-	if (! noteIsOn) {
-		console.log('Note ON: ' + note);
-		setFrequency(getFrequencyFromNote(note));		
-		noteIsOn = true;
+	if (velocity === 0) {
+		// for midi running status, note on with velocity 0 treated as note off
+		noteOff(note, velocity);
 	}
 	else {
-		// for some reason I'm getting a second note on message
-		// rather than a note off 
-		setFrequency(0);
-		noteIsOn = false;
+		console.log('Note ON: ' + note);
+
+		notesOn.unshift(note);	
+		setFrequency(getFrequencyFromNote(note));		
 	}
 }
 
 function noteOff(note, velocity) {
 	console.log('Note OFF: ' + note);
-//	setFrequency(0);
+
+	// remove the note from notes on, multiple instances if they snuck in somehow 
+	for (var i = notesOn.length - 1; i >= 0; i--) {
+		if (notesOn[i] === note) {
+			notesOn.splice(i, 1);
+		}
+	}
+
+	if (notesOn.length > 0) {
+		setFrequency(getFrequencyFromNote(notesOn[0]));		
+	}
+	else {
+		setFrequency(0);
+	}
 }
 
 function getFrequencyFromNote(note) {
@@ -90,7 +102,7 @@ function onMIDIFailure(error) {
 }
 
 function setFrequency(freq) {
-  oscillator.frequency.value = freq;
+	oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
 }
 
 function getFloat(elt) {
