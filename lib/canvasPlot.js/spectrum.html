@@ -1,0 +1,285 @@
+<html>
+<head>
+  <title>canvasPlot.js spectrum analyzer example</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="canvasPlot.js" type="text/javascript"></script>
+  <script src="mapLinear.js" type="text/javascript"></script>
+  <script src="mapSemiLogX.js" type="text/javascript"></script>
+  <script src="curveDrawerLinear.js" type="text/javascript"></script>
+  <script src="simplePlot.js" type="text/javascript"></script>
+  <script src="super.js" type="text/javascript"></script>
+  <script src="frameOffscreen.js" type="text/javascript"></script>
+  <script src="gridOffscreen.js" type="text/javascript"></script>
+  <script src="gridAutoLinear.js" type="text/javascript"></script>
+  <script src="gridAutoSemiLogX.js" type="text/javascript"></script>
+  <script src="gridAutoLinearOffscreen.js" type="text/javascript"></script>
+  <script src="gridAutoSemiLogXOffscreen.js" type="text/javascript"></script>
+  <script src="simplePlotOffscreen.js" type="text/javascript"></script>
+  <script src="canvasStretch.js" type="text/javascript"></script>
+  <script src="spectrumAnalyserSignal.js" type="text/javascript"></script>
+  <script src="simpleSpectrumAnalyser.js" type="text/javascript"></script>
+  <script src="simpleSpectrumAnalyserWidget.js" type="text/javascript"></script>
+  <script src="interpolateLinear.js" type="text/javascript"></script>
+  <script type="text/javascript">
+function init() {
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+	var osc = audioCtx.createOscillator();
+	var gainIn = audioCtx.createGain();
+	var analyser = audioCtx.createAnalyser();
+	var gainOut = audioCtx.createGain();
+
+	osc.connect(gainIn);
+	gainIn.connect(analyser);
+	analyser.connect(gainOut);
+	gainOut.connect(audioCtx.destination);
+
+	var canvas = document.getElementById("canvas");
+
+	var samples = Object.create(canvasPlot.samples);
+	samples.init(new Float32Array(16384), new Float32Array(16384));
+
+	var signal = Object.create(canvasPlot.spectrumAnalyserSignal);
+	signal.init(samples, null);
+	signal.analyser = analyser;
+	signal.updateAnalyser();
+
+	var sa = Object.create(canvasPlot.simpleSpectrumAnalyserWidget);
+	sa.init(canvas, null, [signal], null, null,
+		Object.create(canvasPlot.curveDrawerLinear));
+
+	function setValElement(name) {
+		var elem = document.getElementById(name);
+		elem.valElement = document.getElementById(name + "_val");
+		if (elem.valElement.innerHTML != elem.value)
+			elem.valElement.innerHTML = elem.value;
+		return elem;
+	}
+	var frequency_elem = setValElement("frequency");
+	var x1_elem = setValElement("x1");
+	var x2_elem = setValElement("x2");
+	var y1_elem = setValElement("y1");
+	var y2_elem = setValElement("y2");
+	var points_elem = setValElement("points");
+	var volume_in_elem = setValElement("volume_in");
+	var volume_out_elem = setValElement("volume_out");
+
+	osc.frequency.value = parseFloat(frequency_elem.value);
+	sa.spectrumAnalyser.xRange.min = parseFloat(x1_elem.value);
+	sa.spectrumAnalyser.xRange.max = parseFloat(x2_elem.value);
+	sa.spectrumAnalyser.yRange.min = parseFloat(y1_elem.value);
+	sa.spectrumAnalyser.yRange.max = parseFloat(y2_elem.value);
+	sa.spectrumAnalyser.points = parseInt(points_elem.value);
+	gainIn.gain.value = parseFloat(volume_in_elem.value) * 0.01;
+	gainOut.gain.value = parseFloat(volume_out_elem.value) * 0.01;
+
+	function xaxis_change () {
+		sa.spectrumAnalyser.linearMap = this.value == "linear";
+		sa.update(false);
+	}
+	var xaxis_elems = document.getElementsByName("xaxis");
+	for (var i = 0; i < xaxis_elems.length; i++) {
+		xaxis_elems[i].addEventListener("change", xaxis_change);
+		if (xaxis_elems[i].checked)
+			sa.spectrumAnalyser.linearMap =
+				xaxis_elems[i].value == "linear";
+	}
+
+	function grid_change () {
+		sa.spectrumAnalyser.showGrid = this.value == "visible";
+		sa.update(false);
+	}
+	var grid_elems = document.getElementsByName("grid");
+	for (var i = 0; i < grid_elems.length; i++) {
+		grid_elems[i].addEventListener("change", grid_change);
+		if (grid_elems[i].checked)
+			sa.spectrumAnalyser.showGrid =
+				grid_elems[i].value == "visible";
+	}
+
+	function interpolation_change () {
+		sa.spectrumAnalyser.interpolate =
+			this.value == "linear" ? canvasPlot.interpolateLinear
+					       : null;
+		sa.update(false);
+	}
+	var interpolation_elems = document.getElementsByName("interpolation");
+	for (var i = 0; i < interpolation_elems.length; i++) {
+		interpolation_elems[i].addEventListener("change",
+							interpolation_change);
+		if (interpolation_elems[i].checked)
+			sa.spectrumAnalyser.interpolate =
+				interpolation_elems[i].value == "linear"
+				? canvasPlot.interpolateLinear : null;
+	}
+
+	function waveform_change () {
+		osc.type = this.value;
+	}
+	var waveform_elems = document.getElementsByName("waveform");
+	for (var i = 0; i < waveform_elems.length; i++) {
+		waveform_elems[i].addEventListener("change", waveform_change);
+		if (waveform_elems[i].checked)
+			osc.type = waveform_elems[i].value;
+	}
+
+	sa.update(false);
+
+	function input() {
+		if (this.valElement.innerHTML == this.value)
+			return;
+		this.valElement.innerHTML = this.value;
+
+		switch (this) {
+			case frequency_elem:
+				osc.frequency.value = parseFloat(this.value);
+				break;
+			case x1_elem:
+				sa.spectrumAnalyser.xRange.min =
+					parseFloat(this.value);
+				sa.update(false);
+				break;
+			case x2_elem:
+				sa.spectrumAnalyser.xRange.max =
+					parseFloat(this.value);
+				sa.update(false);
+				break;
+			case y1_elem:
+				sa.spectrumAnalyser.yRange.min =
+					parseFloat(this.value);
+				sa.update(false);
+				break;
+			case y2_elem:
+				sa.spectrumAnalyser.yRange.max =
+					parseFloat(this.value);
+				sa.update(false);
+				break;
+			case points_elem:
+				sa.spectrumAnalyser.points =
+					parseInt(this.value);
+				sa.update(false);
+				break;
+			case volume_in_elem:
+				gainIn.gain.value = parseFloat(this.value)
+						    * 0.01;
+				break;
+			case volume_out_elem:
+				gainOut.gain.value = parseFloat(this.value)
+						     * 0.01;
+				break;
+		}
+	}
+	frequency_elem.addEventListener("input", input);
+	x1_elem.addEventListener("input", input);
+	x2_elem.addEventListener("input", input);
+	y1_elem.addEventListener("input", input);
+	y2_elem.addEventListener("input", input);
+	points_elem.addEventListener("input", input);
+	volume_in_elem.addEventListener("input", input);
+	volume_out_elem.addEventListener("input", input);
+
+	osc.start();
+
+	var ctx = canvas.getContext("2d");
+
+	var lastTime;
+	var fps = 0;
+	function draw() {
+		requestAnimationFrame(draw);
+		sa.updateSignals();
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		sa.draw();
+
+		var curTime = Date.now();
+		if (lastTime) {
+			fps = 0.1 * 1000 / (curTime - lastTime) + 0.9 * fps;
+			ctx.fillStyle = "black";
+			ctx.font = "16px sans";
+			ctx.fillText("FPS: " + fps.toFixed(2), 10, 26);
+		}
+		lastTime = curTime;
+	}
+	draw();
+}
+
+window.addEventListener("load", init);
+  </script>
+</head>
+<body>
+  <div class="canvas">
+    <canvas id="canvas"></canvas>
+  </div>
+  <form>
+    <div>
+      <label>x axis: </label>
+      <input type="radio" name="xaxis" value="logarithmic"/ checked> logarithmic
+      <input type="radio" name="xaxis" value="linear"/> linear
+    </div>
+    <div>
+      <label>grid: </label>
+      <input type="radio" name="grid" value="visible"/ checked> visible
+      <input type="radio" name="grid" value="invisible"/> invisible
+    </div>
+    <div>
+      <label for="x1">x1: </label>
+      <input type="range" id="x1" min="1" max="20000" step="0.1" value="20" />
+      <span id="x1_val">20</span>
+      <span>Hz</span>
+    </div>
+    <div>
+      <label for="x2">x2: </label>
+      <input type="range" id="x2" min="1" max="20000" step="0.1" value="20000" />
+      <span id="x2_val">20000</span>
+      <span>Hz</span>
+    </div>
+    <div>
+      <label for="y1">y1: </label>
+      <input type="range" id="y1" min="-200" max="0" step="1" value="-100" />
+      <span id="y1_val">-100</span>
+      <span>dB</span>
+    </div>
+    <div>
+      <label for="y2">y2: </label>
+      <input type="range" id="y2" min="-200" max="0" step="1" value="0" />
+      <span id="y2_val">0</span>
+      <span>dB</span>
+    </div>
+    <div>
+      <label>interpolation: </label>
+      <input type="radio" name="interpolation" value="linear"/ checked> linear
+      <input type="radio" name="interpolation" value="off"/> off
+    </div>
+    <div>
+      <label for="points">points: </label>
+      <input type="range" id="points" min="2" max="2000" step="1" value="1000" />
+      <span id="points_val">1000</span>
+      <span></span>
+    </div>
+    <div>
+      <label>waveform: </label>
+      <input type="radio" name="waveform" value="sine"/ checked> sine
+      <input type="radio" name="waveform" value="sawtooth"/> sawtooth
+      <input type="radio" name="waveform" value="square"/> square
+      <input type="radio" name="waveform" value="triangle"/> triangle
+    </div>
+    <div>
+      <label for="frequency">frequency: </label>
+      <input type="range" id="frequency" min="20" max="20000" step="0.1" value="440" />
+      <span id="frequency_val">440</span>
+      <span>Hz</span>
+    </div>
+    <div>
+      <label for="volume_in">volume in: </label>
+      <input type="range" id="volume_in" min="0" max="100" step="1" value="100" />
+      <span id="volume_in_val">100</span>
+      <span>%</span>
+    </div>
+    <div>
+      <label for="volume_out">volume out: </label>
+      <input type="range" id="volume_out" min="0" max="100" step="1" value="0" />
+      <span id="volume_out_val">0</span>
+      <span>%</span>
+    </div>
+  </form>
+</body>
+</html>

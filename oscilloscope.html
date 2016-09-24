@@ -1,0 +1,104 @@
+<html>
+<head>
+  <title>canvasPlot.js oscilloscope example</title>
+  <link rel="stylesheet" type="text/css" href="lib/canvasPlot.js/style.css">
+</head>
+<body>
+  <div class="canvas">
+    <canvas id="canvas"></canvas>
+  </div>
+  <form>
+    <div>
+      <label>grid: </label>
+      <input type="radio" name="grid" value="visible"/ checked> visible
+      <input type="radio" name="grid" value="invisible"/> invisible
+    </div>
+    <div>
+      <label for="time">time: </label>
+      <input type="range" id="time" min="0.1" max="100" step="0.1" value="50" />
+      <span id="time_val">50</span>
+      <span>ms</span>
+    </div>
+    <div>
+      <label for="y1">y1: </label>
+      <input type="range" id="y1" min="-1" max="1" step="0.001" value="-1" />
+      <span id="y1_val">-1</span>
+      <span></span>
+    </div>
+    <div>
+      <label for="y2">y2: </label>
+      <input type="range" id="y2" min="-1" max="1" step="0.001" value="1" />
+      <span id="y2_val">1</span>
+      <span></span>
+    </div>
+    <div>
+      <label>trigger: </label>
+      <input type="radio" name="trigger" value="off"/ checked> off
+      <input type="radio" name="trigger" value="up"/> up
+      <input type="radio" name="trigger" value="down"/> down
+    </div>
+    <div>
+      <label for="triggerLevel">trigger level: </label>
+      <input type="range" id="triggerLevel" min="-1" max="1" step="0.001" value="0" />
+      <span id="triggerLevel_val">0</span>
+      <span></span>
+    </div>
+    <div>
+      <label>resampler: </label>
+      <input type="radio" name="resampler" value="off"/ checked> off
+      <input type="radio" name="resampler" value="linear"/> linear
+    </div>
+    <div>
+      <label for="points">points: </label>
+      <input type="range" id="points" min="2" max="2000" step="1" value="1000" />
+      <span id="points_val">1000</span>
+      <span></span>
+    </div>
+    <div>
+      <label>waveform: </label>
+      <input type="radio" name="waveform" value="sine"/ checked> sine
+      <input type="radio" name="waveform" value="sawtooth"/> sawtooth
+      <input type="radio" name="waveform" value="square"/> square
+      <input type="radio" name="waveform" value="triangle"/> triangle
+    </div>
+    <div>
+      <label for="frequency">frequency: </label>
+      <input type="range" id="frequency" min="20" max="20000" step="0.1" value="440" />
+      <span id="frequency_val">440</span>
+      <span>Hz</span>
+    </div>
+    <div>
+      <label for="volume_in">volume in: </label>
+      <input type="range" id="volume_in" min="0" max="100" step="1" value="100" />
+      <span id="volume_in_val">100</span>
+      <span>%</span>
+    </div>
+    <div>
+      <label for="volume_out">volume out: </label>
+      <input type="range" id="volume_out" min="0" max="100" step="1" value="0" />
+      <span id="volume_out_val">0</span>
+      <span>%</span>
+    </div>
+  </form>
+
+  <script src="lib/canvasPlot.js/canvasPlot.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/mapLinear.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/mapSemiLogX.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/curveDrawerLinear.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/simplePlot.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/super.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/frameOffscreen.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/gridOffscreen.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/gridAutoFixedLinearEquispaced.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/gridAutoFixedLinearEquispacedOffscreen.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/simplePlotOffscreen.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/canvasStretch.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/scopeSignal.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/simpleScope.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/simpleScopeWidget.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/resampler.js" type="text/javascript"></script>
+  <script src="lib/canvasPlot.js/resamplerLinear.js" type="text/javascript"></script>
+
+  <script src="oscilloscope.js" type="text/javascript"></script>
+</body>
+</html>
