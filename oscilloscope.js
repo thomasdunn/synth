@@ -1,13 +1,5 @@
 function Oscilloscope(audioCtx) {
-//	var osc = audioCtx.createOscillator();
-//	var gainIn = audioCtx.createGain();
 	var analyser = audioCtx.createAnalyser();
-//	var gainOut = audioCtx.createGain();
-
-// osc.connect(gainIn);
-// gainIn.connect(analyser);
-// analyser.connect(gainOut);
-// gainOut.connect(audioCtx.destination);
 
 	var canvas = document.getElementById("canvas");
 
@@ -32,14 +24,12 @@ function Oscilloscope(audioCtx) {
 			elem.valElement.innerHTML = elem.value;
 		return elem;
 	}
-// var frequency_elem = setValElement("frequency");
+
 	var time_elem = setValElement("time");
 	var y1_elem = setValElement("y1");
 	var y2_elem = setValElement("y2");
 	var triggerLevel_elem = setValElement("triggerLevel");
 	var points_elem = setValElement("points");
-// var volume_in_elem = setValElement("volume_in");
-// var volume_out_elem = setValElement("volume_out");
 
 	var fftSize = Math.ceil(Math.log2(0.001 * time_elem.max
 					  * audioCtx.sampleRate));
@@ -50,14 +40,11 @@ function Oscilloscope(audioCtx) {
 	analyser.fftSize = 1 << fftSize;
 	signal.updateAnalyser();
 
-// osc.frequency.value = parseFloat(frequency_elem.value);
 	scope.scope.time = parseFloat(time_elem.value) * 0.001;
 	scope.scope.yRange.min = parseFloat(y1_elem.value);
 	scope.scope.yRange.max = parseFloat(y2_elem.value);
 	signal.triggerLevel = parseFloat(triggerLevel_elem.value);
 	scope.scope.resamplerPoints = parseInt(points_elem.value);
-// gainIn.gain.value = parseFloat(volume_in_elem.value) * 0.01;
-// gainOut.gain.value = parseFloat(volume_out_elem.value) * 0.01;
 
 	function grid_change () {
 		scope.scope.showGrid = this.value == "visible";
@@ -94,16 +81,6 @@ function Oscilloscope(audioCtx) {
 								     : null;
 	}
 
-// function waveform_change () {
-// 	osc.type = this.value;
-// }
-// var waveform_elems = document.getElementsByName("waveform");
-// for (var i = 0; i < waveform_elems.length; i++) {
-// 	waveform_elems[i].addEventListener("change", waveform_change);
-// 	if (waveform_elems[i].checked)
-// 		osc.type = waveform_elems[i].value;
-// }
-
 	scope.update(false);
 
 	function input() {
@@ -112,9 +89,6 @@ function Oscilloscope(audioCtx) {
 		this.valElement.innerHTML = this.value;
 
 		switch (this) {
-// case frequency_elem:
-// 	osc.frequency.value = parseFloat(this.value);
-// 	break;
 			case time_elem:
 				scope.scope.time = parseFloat(this.value)
 						   * 0.001;
@@ -135,26 +109,13 @@ function Oscilloscope(audioCtx) {
 				scope.scope.resamplerPoints =
 					parseInt(this.value);
 				break;
-// case volume_in_elem:
-// 	gainIn.gain.value = parseFloat(this.value)
-// 			    * 0.01;
-// 	break;
-// case volume_out_elem:
-// 	gainOut.gain.value = parseFloat(this.value)
-// 			     * 0.01;
-// 	break;
 		}
 	}
-// frequency_elem.addEventListener("input", input);
 	time_elem.addEventListener("input", input);
 	y1_elem.addEventListener("input", input);
 	y2_elem.addEventListener("input", input);
 	triggerLevel_elem.addEventListener("input", input);
 	points_elem.addEventListener("input", input);
-// volume_in_elem.addEventListener("input", input);
-// volume_out_elem.addEventListener("input", input);
-
-// osc.start();
 
 	var ctx = canvas.getContext("2d");
 
@@ -179,5 +140,3 @@ function Oscilloscope(audioCtx) {
 
 	return analyser;
 }
-
-// window.addEventListener("load", init);
