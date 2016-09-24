@@ -1,0 +1,39 @@
+* {
+	margin:			0;
+	padding:		0;
+}
+
+html {
+	height:			100%;
+}
+
+body {
+	height:			100%;
+	display:		flex;
+	flex-direction:		column;
+	background-color:	#ddd;
+}
+
+div.canvas {
+	flex: 1 0;
+	overflow: hidden;
+}
+
+canvas {
+	background-color:	white;
+	margin:			5px;
+}
+
+form {
+	margin:			0 auto;
+	display:		table;
+	border-spacing:		7px 2px;
+}
+
+form div {
+	display:		table-row;
+}
+
+form span, form label, form input {
+	display:		table-cell;
+}

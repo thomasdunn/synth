@@ -21,6 +21,10 @@ waveform.addEventListener('change', function() {
   oscillator.type = getSelectValue(waveform);
 });
 
+window.addEventListener("load", function() {
+	gainNode.connect( Oscilloscope(audioCtx) );
+});
+
 // DEFINITIONS
 
 function setFrequency(freq) {
