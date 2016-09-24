@@ -1,28 +1,5 @@
-var gain = document.getElementById('gain');
-var waveform = document.getElementById('waveform');
-
-var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-var oscillator = audioCtx.createOscillator();
-var gainNode = audioCtx.createGain();
-
 var midiAccess;
 var notesOn = [];
-
-oscillator.connect(gainNode);
-gainNode.connect(audioCtx.destination);
-
-oscillator.type = getSelectValue(waveform);
-oscillator.frequency.value = 0;
-oscillator.start();
-
-gain.addEventListener('input', function() {
-  gainNode.gain.value = getFloat(gain);
-});
-
-waveform.addEventListener('change', function() {
-  oscillator.type = getSelectValue(waveform);
-});
 
 if (navigator.requestMIDIAccess) {
 	navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
@@ -99,16 +76,4 @@ function getFrequencyFromNote(note) {
 
 function onMIDIFailure(error) {
 	alert('Error requesting MIDI access: ' + error);
-}
-
-function setFrequency(freq) {
-	oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-}
-
-function getFloat(elt) {
-  return parseFloat(elt.value);
-}
-
-function getSelectValue(elt) {
-  return elt.options[elt.selectedIndex].value;
 }

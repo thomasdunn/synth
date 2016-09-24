@@ -1,3 +1,4 @@
+var freq = document.getElementById('frequency');
 var gain = document.getElementById('gain');
 var waveform = document.getElementById('waveform');
 
@@ -10,8 +11,12 @@ oscillator.connect(gainNode);
 gainNode.connect(audioCtx.destination);
 
 oscillator.type = getSelectValue(waveform);
-oscillator.frequency.value = 0;
+oscillator.frequency.value = getFloat(freq);
 oscillator.start();
+
+freq.addEventListener('input', function() {
+  oscillator.frequency.value = getFloat(freq);
+});
 
 gain.addEventListener('input', function() {
   gainNode.gain.value = getFloat(gain);
@@ -20,12 +25,6 @@ gain.addEventListener('input', function() {
 waveform.addEventListener('change', function() {
   oscillator.type = getSelectValue(waveform);
 });
-
-// DEFINITIONS
-
-function setFrequency(freq) {
-	oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-}
 
 function getFloat(elt) {
   return parseFloat(elt.value);
