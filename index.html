@@ -1,7 +1,9 @@
 <html>
 <head>
   <title>Synth</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/piano-keyboard.css">
+  <link rel="stylesheet" type="text/css" href="css/piano-keyboard-custom.css">
 </head>
 <body>
   <h1>Synth</h1>
@@ -74,6 +76,8 @@
     </div>
   </form>
 
+  <div class="keyboard"></div>
+
   <script src="lib/canvasPlot.js/canvasPlot.js" type="text/javascript"></script>
   <script src="lib/canvasPlot.js/mapLinear.js" type="text/javascript"></script>
   <script src="lib/canvasPlot.js/mapSemiLogX.js" type="text/javascript"></script>
@@ -93,6 +97,10 @@
   <script src="lib/canvasPlot.js/resamplerLinear.js" type="text/javascript"></script>
 
   <script src="oscilloscope.js"></script>
+
+  <script type="text/javascript" src="https://cdn.polyfill.io/v1/polyfill.js?features=default,Set,Element.prototype.matches"></script>
+  <script src="lib/piano-keyboard-bundle.js"></script>
+  <script src="piano-keyboard.js"></script>
 
   <script src="index.js"></script>
   <script src="midi.js"></script>
