@@ -130,7 +130,7 @@ function Oscilloscope(audioCtx) {
 		var curTime = Date.now();
 		if (lastTime) {
 			fps = 0.1 * 1000 / (curTime - lastTime) + 0.9 * fps;
-			ctx.fillStyle = "black";
+			ctx.fillStyle = "white";
 			ctx.font = "16px sans";
 			ctx.fillText("FPS: " + fps.toFixed(2), 10, 26);
 		}
