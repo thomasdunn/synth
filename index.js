@@ -22,7 +22,8 @@ waveform.addEventListener('change', function() {
 });
 
 window.addEventListener("load", function() {
-	gainNode.connect( Oscilloscope(audioCtx) );
+    gainNode.connect( Oscilloscope(audioCtx) );
+    gainNode.connect( SpectrumAnalyzer(audioCtx) );
 });
 
 // DEFINITIONS

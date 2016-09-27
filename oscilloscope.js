@@ -1,7 +1,7 @@
 function Oscilloscope(audioCtx) {
 	var analyser = audioCtx.createAnalyser();
 
-	var canvas = document.getElementById("canvas");
+	var canvas = document.getElementById("oscopeCanvas");
 
 	var samples = Object.create(canvasPlot.samples);
 	samples.init(new Float32Array(32768), new Float32Array(32768));

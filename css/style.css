@@ -16,6 +16,7 @@ body {
 
 div.canvas {
 	flex: 1 0;
+	width: 50%;
 	overflow: hidden;
 }
 
