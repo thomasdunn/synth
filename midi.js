@@ -11,11 +11,22 @@ else {
 // DEFINITIONS
 
 function onMIDISuccess(access) {
-	midiAccess = access;
-	var inputs = midiAccess.inputs.values();
+	try {
+		midiAccess = access;
+		var inputs = midiAccess.inputs.values();
+		var midiDeviceCount = 0;
 
-	for (var input = inputs.next(); input && ! input.done; input = inputs.next()) {
-		input.value.onmidimessage = onMIDIMessage;
+		for (var input = inputs.next(); input && ! input.done; input = inputs.next()) {
+			input.value.onmidimessage = onMIDIMessage;
+			midiDeviceCount++;
+		}
+
+		console.log('MIDI device count: ' + midiDeviceCount);
+
+		window.MIDIDeviceCount = midiDeviceCount;
+	}
+	catch (e) {
+		window.MIDIDeviceCount = 0;
 	}
 }
 
@@ -39,13 +50,19 @@ function onMIDIMessage(message) {
 	}
 }
 
+function onMIDIFailure(error) {
+	window.MIDIDeviceCount = 0;
+
+	alert('Error requesting MIDI access: ' + error);
+}
+
 function noteOn(note, velocity) {
 	if (velocity === 0) {
 		// for midi running status, note on with velocity 0 treated as note off
 		noteOff(note, velocity);
 	}
 	else {
-		console.log('Note ON: ' + note);
+		// console.log('Note ON: ' + note);
 
 		notesOn.unshift(note);	
 		setFrequency(getFrequencyFromNote(note));		
@@ -53,7 +70,7 @@ function noteOn(note, velocity) {
 }
 
 function noteOff(note, velocity) {
-	console.log('Note OFF: ' + note);
+	// console.log('Note OFF: ' + note);
 
 	// remove the note from notes on, multiple instances if they snuck in somehow 
 	for (var i = notesOn.length - 1; i >= 0; i--) {
@@ -72,8 +89,4 @@ function noteOff(note, velocity) {
 
 function getFrequencyFromNote(note) {
 	return Math.pow(2, (note - 69)/12) * 440;
-}
-
-function onMIDIFailure(error) {
-	alert('Error requesting MIDI access: ' + error);
 }
