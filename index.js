@@ -18,7 +18,7 @@ oscillator.frequency.value = 0;
 oscillator.start();
 
 filter.type = 'lowpass';
-filter.frequency.value = 32768;
+filter.frequency.value = 24000;
 filter.Q.value = 1;
 
 gain.addEventListener('input', function() {
