@@ -6,11 +6,13 @@ var cutoff = document.getElementById('cutoff');
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 var oscillator = audioCtx.createOscillator();
-var gainNode = audioCtx.createGain();
 var filter = audioCtx.createBiquadFilter();
+var envelope = audioCtx.createGain();
+var gainNode = audioCtx.createGain();
 
 oscillator.connect(filter);
-filter.connect(gainNode);
+filter.connect(envelope);
+envelope.connect(gainNode);
 gainNode.connect(audioCtx.destination);
 
 oscillator.type = getSelectValue(waveform);
@@ -45,7 +47,23 @@ window.addEventListener("load", function() {
 // DEFINITIONS
 
 function setFrequency(freq) {
-	oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    // TODO - currently sending 0hz on note off
+    //        for now ignore that and let it decay
+    //        future: don't use special handling of 0 gate close messages
+
+    if (freq !== 0) {
+        // if left with following does a frequency sweep from last value - oscillator.frequency.value = freq;
+        oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        // end scheduled events from recently pressed keys
+        envelope.gain.cancelScheduledValues(audioCtx.currentTime);
+
+        // attempt to remove click between rapidly pressed notes - envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 40/1000);
+        envelope.gain.setValueAtTime(1.0, audioCtx.currentTime);
+
+        // 2 second decay
+        envelope.gain.exponentialRampToValueAtTime(0.000001, audioCtx.currentTime + 2);
+    }
 }
 
 function getFloat(elt) {
