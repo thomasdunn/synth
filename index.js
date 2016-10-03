@@ -59,15 +59,18 @@ function setFrequency(freq) {
         envelope.gain.cancelScheduledValues(audioCtx.currentTime);
 
         // start at silence
-        envelope.gain.setValueAtTime(0.000001, audioCtx.currentTime);
+        envelope.gain.setTargetAtTime(0, audioCtx.currentTime, 0.015);
 
         // attempt to remove click between rapidly pressed notes - envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 40/1000);
 
         // attack
         envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 0.1);
 
+        // sustain
+        envelope.gain.setValueAtTime(1.0, audioCtx.currentTime + 0.6);
+
         // decay
-        envelope.gain.exponentialRampToValueAtTime(0.000001, audioCtx.currentTime + 3);
+        envelope.gain.exponentialRampToValueAtTime(0.000001, audioCtx.currentTime + 3.6);
     }
 }
 
