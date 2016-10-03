@@ -55,14 +55,19 @@ function setFrequency(freq) {
         // if left with following does a frequency sweep from last value - oscillator.frequency.value = freq;
         oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-        // end scheduled events from recently pressed keys
+        // cancel previous envelope to start up the next...
         envelope.gain.cancelScheduledValues(audioCtx.currentTime);
 
-        // attempt to remove click between rapidly pressed notes - envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 40/1000);
-        envelope.gain.setValueAtTime(1.0, audioCtx.currentTime);
+        // start at silence
+        envelope.gain.setValueAtTime(0.000001, audioCtx.currentTime);
 
-        // 2 second decay
-        envelope.gain.exponentialRampToValueAtTime(0.000001, audioCtx.currentTime + 2);
+        // attempt to remove click between rapidly pressed notes - envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 40/1000);
+
+        // attack
+        envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 0.1);
+
+        // decay
+        envelope.gain.exponentialRampToValueAtTime(0.000001, audioCtx.currentTime + 3);
     }
 }
 
