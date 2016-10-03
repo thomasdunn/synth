@@ -58,10 +58,8 @@ function setFrequency(freq) {
         // cancel previous envelope to start up the next...
         envelope.gain.cancelScheduledValues(audioCtx.currentTime);
 
-        // start at silence
+        // start at silence - setTargetAtTime to avoid click from ending previous play at non-zero crossing point
         envelope.gain.setTargetAtTime(0, audioCtx.currentTime, 0.015);
-
-        // attempt to remove click between rapidly pressed notes - envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 40/1000);
 
         // attack
         envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 0.1);
