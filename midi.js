@@ -65,7 +65,12 @@ function noteOn(note, velocity) {
 		// console.log('Note ON: ' + note);
 
 		notesOn.unshift(note);	
-		setFrequency(getFrequencyFromNote(note));		
+
+		openGate();
+
+		// don't set frequency, instead 'trigger' event
+		// setFrequency(getFrequencyFromNote(note));
+		trigger(note);
 	}
 }
 
@@ -80,13 +85,19 @@ function noteOff(note, velocity) {
 	}
 
 	if (notesOn.length > 0) {
-		setFrequency(getFrequencyFromNote(notesOn[0]));		
+		// don't set frequency, instead 'trigger' event
+		//setFrequency(getFrequencyFromNote(notesOn[0]));
+
+		// retrigger with last note priority
+		trigger(notesOn[0]);
 	}
 	else {
-		setFrequency(0);
+		//setFrequency(0);
+		closeGate();
 	}
 }
 
 function getFrequencyFromNote(note) {
+	// MIDI note 69 = A4 (440Hz)
 	return Math.pow(2, (note - 69)/12) * 440;
 }
