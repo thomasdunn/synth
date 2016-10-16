@@ -19,10 +19,15 @@ var envelopeState;
 
 var timeConstantFactor = 10;
 
+// var attackTime = 0.2;
+// var decayTime = 0.75;
+// var sustainLevel = 0.4;
+// var releaseTime = 1.5;
+
 var attackTime = 0.2;
-var decayTime = 0.75;
-var sustainLevel = 0.4;
-var releaseTime = 1.5;
+var decayTime = 0.4;
+var sustainLevel = 0.5;
+var releaseTime = 0.5;
 
 // for now : implement ADSR w/ retriggering (from S back to A+D) w/ last note priority
 var gateOpen = false;
