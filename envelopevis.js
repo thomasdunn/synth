@@ -55,7 +55,10 @@
             if (! lastGateOpen && gateOpen) {
                 // gate just opened, reset envelope vis
                 x = 10;
+                ctx.closePath();
                 ctx.clearRect(0, 0, width, height);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
             }
 
             y = height - (height * envelope.gain.value);
@@ -64,13 +67,8 @@
             y *= 0.93;
             y += 5;
 
-            // ctx.beginPath();
-            // ctx.moveTo(x, y);
-            // ctx.lineTo(x, y);
-            // ctx.closePath(); // draws last line of the triangle
-            // ctx.stroke();
-
-            ctx.fillRect(x, y, 1, 1);
+            ctx.lineTo(x, y);
+            ctx.stroke();
 
             x += 2;
             lastGateOpen = gateOpen;
