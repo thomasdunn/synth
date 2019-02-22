@@ -17,17 +17,18 @@ var envelopeStateSustain = 'S';
 var envelopeStateRelease = 'R';
 var envelopeState;
 
-var timeConstantFactor = 10;
+var timeConstantFactor = 5;
 
 // var attackTime = 0.2;
 // var decayTime = 0.75;
 // var sustainLevel = 0.4;
 // var releaseTime = 1.5;
 
-var attackTime = 0.2;
-var decayTime = 0.4;
+var attackTime = 0.4;
+// var attackTime = 0.6;
+var decayTime = 0.6;
 var sustainLevel = 0.5;
-var releaseTime = 0.5;
+var releaseTime = 0.6;
 
 // for now : implement ADSR w/ retriggering (from S back to A+D) w/ last note priority
 var gateOpen = false;
@@ -65,6 +66,26 @@ window.addEventListener("load", function() {
     gainNode.connect( Oscilloscope(audioCtx) );
     gainNode.connect( SpectrumAnalyzer(audioCtx) );
 });
+
+var attackCurve = (function() {
+    // exponential gives wrong curve shape, we want log shape
+    // the following gives logarithmic curve starting at 0,0 and going through 1,1
+    // log10(x + 0.1) + 1 where 0 <= x <= 9/10
+
+    var curveLength = 44100;
+    var curve = new Float32Array(curveLength);
+    var x;
+    for (var i = 0; i < curveLength; ++i) {
+        // this line below from example in spec
+        // curve[i] = Math.sin(Math.PI * i / curveLength);
+
+        // 0 <= x <= 9/10
+        x = (i / curveLength) * 0.9;
+        curve[i] = Math.log10(x + 0.1) + 1;
+    }
+
+    return curve;
+})();
 
 // DEFINITIONS
 
@@ -106,15 +127,20 @@ function attackDecay(level) {
         // start anew
 
         // cancel previous envelope to start up the next...
+        console.log('envelope.gain.cancelScheduledValues(audioCtx.currentTime);');
         envelope.gain.cancelScheduledValues(audioCtx.currentTime);
 
         // start at silence - setTargetAtTime to avoid click from ending previous play at non-zero crossing point
+        console.log('envelope.gain.setTargetAtTime(0, audioCtx.currentTime, 0.015);');
         envelope.gain.setTargetAtTime(0, audioCtx.currentTime, 0.015);
 
         // attack to max
-        envelope.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + attackTime);
+        console.log('envelope.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + attackTime);');
+        envelope.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + attackTime);
+        // envelope.gain.setValueCurveAtTime(attackCurve, audioCtx.currentTime, attackTime);
 
         // decay to sustain
+        console.log('envelope.gain.setTargetAtTime(sustainLevel, audioCtx.currentTime + attackTime, decayTime / timeConstantFactor);');
         envelope.gain.setTargetAtTime(sustainLevel, audioCtx.currentTime + attackTime, decayTime / timeConstantFactor);
     }
     else if (level === sustainLevel) {
@@ -127,7 +153,9 @@ function attackDecay(level) {
 
 function release() {
     // decay back to silence
-    envelope.gain.setTargetAtTime(minGain, audioCtx.currentTime, releaseTime / timeConstantFactor);
+    console.log('envelope.gain.setTargetAtTime(minGain, audioCtx.currentTime, releaseTime / timeConstantFactor);');
+    envelope.gain.cancelScheduledValues(audioCtx.currentTime);
+    envelope.gain.setTargetAtTime(minGain, audioCtx.currentTime + 0.0001, releaseTime / timeConstantFactor);
 }
 
 function openGate() {

@@ -70,7 +70,7 @@
             ctx.lineTo(x, y);
             ctx.stroke();
 
-            x += 2;
+            x += 4;
             lastGateOpen = gateOpen;
         }
     }
