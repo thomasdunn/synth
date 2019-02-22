@@ -1,13 +1,13 @@
 <html>
 <head>
-  <title>Synth</title>
+  <title>Web Audio Demo Synth</title>
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" type="text/css" href="css/piano-keyboard.css">
   <link rel="stylesheet" type="text/css" href="css/piano-keyboard-custom.css">
 </head>
 <body>
-  <h1>Synth</h1>
-
+<h3>Web Audio Demo Synth</h3>
+<p class="tagline">Horrible, hacked together proof that Web Audio API is awesome.  Use on-screen keyboard or plug in midi keyboard.</p>
   <div>
     <div>
       <label>Level</label>
@@ -34,7 +34,7 @@
 
   <div>
     <div style="width:33.3%; float:right;">
-      <div class="canvas" style="width:100%; height:50%;">
+      <div class="canvas">
         <canvas id="spectrumCanvas"></canvas>
       </div>
       <div>
@@ -87,7 +87,7 @@
 
     </div>
     <div style="width: 33.3%; float:right;">
-      <div class="canvas" style="width:100%; height:50%;">
+      <div class="canvas">
         <canvas id="oscopeCanvas"></canvas>
       </div>
       <div>
@@ -141,7 +141,7 @@
     </div>
 
     <div style="width: 33.3%;">
-      <div class="canvas" style="width:100%; height:50%;">
+      <div class="canvas">
         <canvas id="envCanvas" width="630" height="460"></canvas>
       </div>
     </div>
