@@ -1,3 +1,5 @@
+// Modified from canvasPlot.js
+
 function Oscilloscope(audioCtx) {
 	var analyser = audioCtx.createAnalyser();
 

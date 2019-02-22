@@ -1,3 +1,5 @@
+// Modified from canvasPlot.js
+
 function SpectrumAnalyzer(audioCtx) {
     var analyser = audioCtx.createAnalyser();
 
