@@ -8,3 +8,7 @@ A completely hacked together experiment - Web Audio synth with:
 * Oscilloscope and Spectrum Analyzer thanks to https://github.com/sdangelo/canvasPlot.js
 * On-screen touch keyboard
 * Supports connecting a MIDI keyboard
+
+Demo: https://thomasdunn.github.io/synth/
+
+![Screenshot](screenshot.png)
